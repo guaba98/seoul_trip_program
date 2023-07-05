@@ -179,6 +179,7 @@ class FoliumMap(QWidget):
         self.layout.addWidget(self.web)
 
     def load_map_2(self):
+        """미사용"""
         with open('index.html', 'r', encoding="utf-8") as f:
             html = f.read()
             self.webEngineView.setUrl(QUrl(html))
