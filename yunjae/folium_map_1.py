@@ -1,7 +1,7 @@
 """
 작성자: 김윤재
 최초작성: 2023-07-03(월)
-최종수정: 2023-07-05(수) 20:31
+최종수정: 2023-07-05(수) 20:51
 """
 
 # --- import modules
@@ -15,6 +15,7 @@ from PyQt5.QtWebEngineWidgets import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
+from folium import plugins
 from folium.plugins import *
 import webbrowser
 
@@ -78,6 +79,7 @@ class FoliumMap(QWidget):
         self.mapping_food_all_show()  -> 모든 음식점을 지도에 마커+클러스트로 표시합니다.
         self.mapping_food_guname_show(guname: str)  -> 특정 음식점을 지도에 마커+클러스트로 표시합니다.  
         """
+        self.mapping_lodges_all_show()
         self.load_map()  # --- 현재 폴더에 index.html 파일을 저장하고, index.html 파일 불러오기
 
     # --- 메소드
@@ -120,7 +122,13 @@ class FoliumMap(QWidget):
             img = row['img_path']
             roadview = '<a href="https://www.google.com/maps?layer=c&cbll=' + str(x_pos) + ',' + str(y_pos) + '" target="_blank">GOOGLE STREET VIEW(Mouse Wheel Click)</a>'
             popup = folium.Popup(f"<img src='{img}'>" + "<br><br>" + name + "<br><br>" + str(info) + "<br><br>" + roadview, min_width=400, max_width=400)
-            folium.Marker([x_pos, y_pos], tooltip=name, popup=popup, icon=folium.Icon(color="blue")).add_to(self.marker_cluster)
+            icon = plugins.BeautifyIcon(
+                icon='utensils',
+                border_color='darkblue',
+                text_color='darkblue',
+                icon_shape='triangle',
+            )
+            folium.Marker([x_pos, y_pos], tooltip=name, popup=popup, icon=icon).add_to(self.marker_cluster)
 
     def mapping_lodges_guname_show(self, guname: str):
         """DB의 숙박지 목록을 구별로 맵에 마커 + 클러스트로 적용시킵니다"""
@@ -146,7 +154,7 @@ class FoliumMap(QWidget):
             img = row['img_path']
             roadview = '<a href="https://www.google.com/maps?layer=c&cbll=' + str(x_pos) + ',' + str(y_pos) + '" target="_blank">GOOGLE STREET VIEW(Mouse Wheel Click)</a>'
             popup = folium.Popup(f"<img src='{img}'>" + "<br><br>" + name + "<br><br>" + str(info) + "<br><br>" + roadview, min_width=400, max_width=400)
-            folium.Marker([x_pos, y_pos], tooltip=name, popup=popup, icon=folium.Icon(color="red")).add_to(self.marker_cluster)
+            folium.Marker([x_pos, y_pos], tooltip=name, popup=popup, icon=folium.Icon(color="green")).add_to(self.marker_cluster)
 
     def mapping_food_guname_show(self, guname: str):
         """DB의 음식점 목록을 구별로 마커 + 클러스트로 적용시킵니다"""
@@ -158,7 +166,7 @@ class FoliumMap(QWidget):
             info = row['address']
             img = row['img_path']
             popup = folium.Popup(f"<img src='{img}'>" + "<br><br>" + name + "<br><br>" + str(info), min_width=400, max_width=400)
-            folium.Marker([x_pos, y_pos], tooltip=name, popup=popup, icon=folium.Icon(color="red")).add_to(self.marker_cluster)
+            folium.Marker([x_pos, y_pos], tooltip=name, popup=popup, icon=folium.Icon(color="green")).add_to(self.marker_cluster)
 
     def load_map(self):
         """self.seoul_map을 index.html 파일로 저장하고, PyQt 레이아웃에 QWebEngineView를 추가합니다"""
@@ -178,7 +186,6 @@ class FoliumMap(QWidget):
     def button_clicked_event(self):
         """구글 스트릿 뷰 상태에서 뒤로가기 버튼을 클릭하면 원래 화면으로 이동합니다"""
         self.web.page().triggerAction(QWebEnginePage.WebAction.Back)
-        pass
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
