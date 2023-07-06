@@ -1,23 +1,20 @@
 """
 작성자: 김윤재
 최초작성: 2023-07-03(월)
-최종수정: 2023-07-06(목) 00:50
+최종수정: 2023-07-06(목) 11:59
 """
 
 # --- import modules
-import io
 import sqlite3
 import sys
 
 import folium
 import pandas as pd
+from haversine import *
+from PyQt5.QtCore import *
 from PyQt5.QtWebEngineWidgets import *
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from folium import plugins
 from folium.plugins import *
-import webbrowser
 
 
 class FoliumMap(QWidget):
@@ -57,7 +54,7 @@ class FoliumMap(QWidget):
 
         # --- folium 맵 설정: 서울 전체 맵
         self.seoul_map = folium.Map(
-            tiles=self.titles,  # --- 배경지도 tiles에 대한 속성 (기본값: https://www.openstreetmap.org)
+            # tiles=self.titles,  # --- 배경지도 tiles에 대한 속성 (기본값: https://www.openstreetmap.org)
             attr=self.attr,
             zoom_start=self.zoom_level,  # --- 화면 보여줄 거리 / 값이 적을수록 가까이 보여줌
             location=[self.latitude, self.longitude],  # --- 현재 화면에 보여줄 좌표 값
@@ -79,7 +76,8 @@ class FoliumMap(QWidget):
         self.mapping_food_all_show()  -> 모든 음식점을 지도에 마커+클러스트로 표시합니다.
         self.mapping_food_guname_show(guname: str)  -> 특정 음식점을 지도에 마커+클러스트로 표시합니다.  
         """
-        self.mapping_food_all_show()
+        self.mapping_tour_all_show()
+        self.location_straight_distance()
         self.load_map()  # --- 현재 폴더에 index.html 파일을 저장하고, index.html 파일 불러오기
 
     # --- 메소드
@@ -172,6 +170,19 @@ class FoliumMap(QWidget):
             img = row['img_path']
             popup = folium.Popup(f"<img src='{img}'>" + "<br><br>" + name + "<br><br>" + str(info), min_width=400, max_width=400)
             folium.Marker([x_pos, y_pos], tooltip=name, popup=popup, icon=folium.Icon(color="green")).add_to(self.marker_cluster)
+
+    def location_straight_distance(self):
+        """사용자 위치와 특정 종류의 사업장들의 직선거리를 계산하고 출력합니다"""
+        query = pd.read_sql(f"SELECT name, address, x_pos, y_pos FROM food_list", self.con)
+        lotte_tower_location = 37.5131008, 127.1034334
+        for index, row in query.iterrows():
+            x_pos = row['x_pos']
+            y_pos = row['y_pos']
+            name = row['name']
+            info = row['address']
+            calculate = haversine((lotte_tower_location), (x_pos, y_pos), unit='m')
+            print(f"롯데타워와 {name}({index})와(과)의 직선거리는 {calculate:.2f} 미터입니다.")
+
 
     def load_map(self):
         """self.seoul_map을 index.html 파일로 저장하고, PyQt 레이아웃에 QWebEngineView를 추가합니다"""
