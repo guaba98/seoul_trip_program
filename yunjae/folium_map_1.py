@@ -1,7 +1,7 @@
 """
 작성자: 김윤재
 최초작성: 2023-07-03(월)
-최종수정: 2023-07-05(수) 20:51
+최종수정: 2023-07-06(목) 00:50
 """
 
 # --- import modules
@@ -79,7 +79,7 @@ class FoliumMap(QWidget):
         self.mapping_food_all_show()  -> 모든 음식점을 지도에 마커+클러스트로 표시합니다.
         self.mapping_food_guname_show(guname: str)  -> 특정 음식점을 지도에 마커+클러스트로 표시합니다.  
         """
-        self.mapping_lodges_all_show()
+        self.mapping_food_all_show()
         self.load_map()  # --- 현재 폴더에 index.html 파일을 저장하고, index.html 파일 불러오기
 
     # --- 메소드
@@ -93,9 +93,10 @@ class FoliumMap(QWidget):
             info = row['신주소'], row['전화번호']
             link = f"<a href={row['웹사이트']}>웹사이트 접속</a>"
             img = row['img_path']
-            roadview = '<a href="https://www.google.com/maps?layer=c&cbll=' + str(x_pos) + ',' + str(y_pos) + '" target="_blank">GOOGLE STREET VIEW(Mouse Wheel Click)</a>'
+            roadview = f'<a href="https://www.google.com/maps?layer=c&cbll={str(x_pos)},{str(y_pos)}">구글 거리뷰로 보기</a>'
+            icon = folium.Icon(color="purple", icon="glyphicon glyphicon-tag", icon_color="white")
             popup = folium.Popup(f"<img src='{img}'>" + "<br>" + name + f"({str(link)})" + "<br><br>" + str(info) + "<br><br>" + roadview, min_width=500, max_width=500)
-            folium.Marker([x_pos, y_pos], tooltip=name, popup=popup, icon=folium.Icon(color="red")).add_to(self.marker_cluster)
+            folium.Marker([x_pos, y_pos], tooltip=name, popup=popup, icon=icon).add_to(self.marker_cluster)
 
     def mapping_tour_guname_show(self, guname: str):
         """DB의 관광명소 목록을 맵에 마커 + 클러스트로 적용시킵니다"""
@@ -107,9 +108,10 @@ class FoliumMap(QWidget):
             info = row['신주소'], row['전화번호']
             link = f"<a href={row['웹사이트']}>웹사이트 접속</a>"
             img = row['img_path']
-            roadview = '<a href="https://www.google.com/maps?layer=c&cbll=' + str(x_pos) + ',' + str(y_pos) + '" target="_blank">GOOGLE STREET VIEW(Mouse Wheel Click)</a>'
+            roadview = f'<a href="https://www.google.com/maps?layer=c&cbll={str(x_pos)},{str(y_pos)}">구글 거리뷰로 보기</a>'
+            icon = folium.Icon(color="purple", icon="glyphicon glyphicon-tag", icon_color="white")
             popup = folium.Popup(f"<img src='{img}'>" + "<br>" + name + f"({str(link)})" + "<br><br>" + str(info) + "<br><br>" + roadview, min_width=500, max_width=500)
-            folium.Marker([x_pos, y_pos], tooltip=name, popup=popup, icon=folium.Icon(color="red")).add_to(self.marker_cluster)
+            folium.Marker([x_pos, y_pos], tooltip=name, popup=popup, icon=icon).add_to(self.marker_cluster)
 
     def mapping_lodges_all_show(self):
         """DB의 숙박지 목록을 맵에 마커 + 클러스트로 적용시킵니다"""
@@ -120,14 +122,15 @@ class FoliumMap(QWidget):
             name = row['사업장명']
             info = row['도로명주소'], row['전화번호']
             img = row['img_path']
-            roadview = '<a href="https://www.google.com/maps?layer=c&cbll=' + str(x_pos) + ',' + str(y_pos) + '" target="_blank">GOOGLE STREET VIEW(Mouse Wheel Click)</a>'
+            roadview = f'<a href="https://www.google.com/maps?layer=c&cbll={str(x_pos)},{str(y_pos)}">구글 거리뷰로 보기</a>'
+            icon = folium.Icon(color="blue", icon="glyphicon glyphicon-tag", icon_color="white")
             popup = folium.Popup(f"<img src='{img}'>" + "<br><br>" + name + "<br><br>" + str(info) + "<br><br>" + roadview, min_width=400, max_width=400)
-            icon = plugins.BeautifyIcon(
-                icon='utensils',
-                border_color='darkblue',
-                text_color='darkblue',
-                icon_shape='triangle',
-            )
+            # icon = plugins.BeautifyIcon(
+            #     icon='utensils',
+            #     border_color='darkblue',
+            #     text_color='darkblue',
+            #     icon_shape='triangle',
+            # )
             folium.Marker([x_pos, y_pos], tooltip=name, popup=popup, icon=icon).add_to(self.marker_cluster)
 
     def mapping_lodges_guname_show(self, guname: str):
@@ -139,9 +142,10 @@ class FoliumMap(QWidget):
             name = row['사업장명']
             info = row['도로명주소'], row['전화번호']
             img = row['img_path']
-            roadview = '<a href="https://www.google.com/maps?layer=c&cbll=' + str(x_pos) + ',' + str(y_pos) + '" target="_blank">GOOGLE STREET VIEW(Mouse Wheel Click)</a>'
+            roadview = f'<a href="https://www.google.com/maps?layer=c&cbll={str(x_pos)},{str(y_pos)}">구글 거리뷰로 보기</a>'
             popup = folium.Popup(f"<img src='{img}'>" + "<br><br>" + name + "<br><br>" + str(info) + "<br><br>" + roadview, min_width=400, max_width=400)
-            folium.Marker([x_pos, y_pos], tooltip=name, popup=popup, icon=folium.Icon(color="blue")).add_to(self.marker_cluster)
+            icon = folium.Icon(color="blue", icon="glyphicon glyphicon-tag", icon_color="white")
+            folium.Marker([x_pos, y_pos], tooltip=name, popup=popup, icon=icon).add_to(self.marker_cluster)
 
     def mapping_food_all_show(self):
         """DB의 음식점 목록을 맵에 마커 + 클러스트로 적용시킵니다"""
@@ -152,9 +156,10 @@ class FoliumMap(QWidget):
             name = row['name']
             info = row['address']
             img = row['img_path']
-            roadview = '<a href="https://www.google.com/maps?layer=c&cbll=' + str(x_pos) + ',' + str(y_pos) + '" target="_blank">GOOGLE STREET VIEW(Mouse Wheel Click)</a>'
+            roadview = f'<a href="https://www.google.com/maps?layer=c&cbll={str(x_pos)},{str(y_pos)}">구글 거리뷰로 보기</a>'
             popup = folium.Popup(f"<img src='{img}'>" + "<br><br>" + name + "<br><br>" + str(info) + "<br><br>" + roadview, min_width=400, max_width=400)
-            folium.Marker([x_pos, y_pos], tooltip=name, popup=popup, icon=folium.Icon(color="green")).add_to(self.marker_cluster)
+            icon = folium.Icon(color="red", icon="glyphicon glyphicon-tag", icon_color="white")
+            folium.Marker([x_pos, y_pos], tooltip=name, popup=popup, icon=icon).add_to(self.marker_cluster)
 
     def mapping_food_guname_show(self, guname: str):
         """DB의 음식점 목록을 구별로 마커 + 클러스트로 적용시킵니다"""
@@ -174,7 +179,7 @@ class FoliumMap(QWidget):
         # self.seoul_map.save(data, close_file=False)
         # web.setHtml(data.getvalue().decode())
         self.seoul_map.save('index.html', close_file=False)
-        webbrowser.open(r'index.html')  # --- 테스트용: 웹브라우저에서도 self.seoul_map 열기
+        # webbrowser.open(r'index.html')  # --- 테스트용: 웹브라우저에서도 self.seoul_map 열기
         self.web.setUrl(QUrl("file:///index.html"))  # QWebEngineView 를 이용하여 웹 페이지를 표출
         self.layout.addWidget(self.web)
 
